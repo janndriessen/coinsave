@@ -8,14 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var shouldTransition = false
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            if shouldTransition {
+                // TODO:
+                Text("Dashboard")
+                    .transition(.opacity)
+            } else {
+                ZStack {
+                    CSColor.white.edgesIgnoringSafeArea(.all)
+                    VStack {
+                        Text("coinsave")
+                            .foregroundStyle(CSColor.darkGray)
+                            .font(.system(size: 36))
+                            .bold()
+                    }
+                    .padding()
+                }
+            }
         }
-        .padding()
+        .onAppear {
+            Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { _ in
+                withAnimation(.easeIn) {
+                    shouldTransition = true
+                }
+            }
+        }
     }
 }
 

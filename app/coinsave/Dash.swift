@@ -9,82 +9,84 @@ import SwiftUI
 
 struct Dash: View {
     var body: some View {
-        VStack {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("cbBTC")
-                        .font(.system(size: 38))
-                        .foregroundStyle(CSColor.blue)
-                        .bold()
-                    Text("0.000005")
-                        .font(.system(size: 32))
-                        .foregroundStyle(CSColor.black)
-                }
-                .padding(.horizontal, 20)
-                Spacer()
-            }
-            .padding(.top, 40)
-            HStack {
-                Bars()
-                Bars()
-            }
-            .padding(.bottom, 64)
-            ZStack {
+        ScrollView {
+            VStack {
                 HStack {
-                    BackgroundAnimation()
-                        .frame(height: 50)
-                        .opacity(0.5)
+                    VStack(alignment: .leading) {
+                        Text("cbBTC")
+                            .font(.system(size: 38))
+                            .foregroundStyle(CSColor.blue)
+                            .bold()
+                        Text("0.000005")
+                            .font(.system(size: 32))
+                            .foregroundStyle(CSColor.black)
+                    }
+                    .padding(.horizontal, 20)
                     Spacer()
                 }
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(CSColor.gray.opacity(0.1))
-                    .frame(height: 150)
-                //                .cornerRadius(15)
-                    .overlay(
-                        ZStack(alignment: .leading) {
-                            VStack(alignment: .leading) {
-                                Text("Start saving Bitcoin for the best price with autopilot by coinsave.")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(CSColor.black)
-                                Spacer()
-                                HStack(alignment: .bottom) {
-                                    Text("Powered by AI agents.")
-                                        .font(.system(size: 16))
+                .padding(.top, 40)
+                HStack {
+                    Bars()
+                    Bars()
+                }
+                .padding(.bottom, 48)
+                ZStack {
+                    HStack {
+                        BackgroundAnimation()
+                            .frame(height: 50)
+                            .opacity(0.5)
+                        Spacer()
+                    }
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(CSColor.gray.opacity(0.1))
+                        .frame(height: 150)
+                    //                .cornerRadius(15)
+                        .overlay(
+                            ZStack(alignment: .leading) {
+                                VStack(alignment: .leading) {
+                                    Text("Start saving Bitcoin for the best price with autopilot by coinsave.")
+                                        .font(.system(size: 20))
                                         .foregroundColor(CSColor.black)
                                     Spacer()
-                                    Text("Start")
-                                        .padding(.horizontal, 20)
-                                        .padding(.vertical, 10)
-                                        .background(CSColor.blue)
-                                        .cornerRadius(30)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(CSColor.white)
-                                        .shadow(color: .white, radius: 2)
-                                        .bold()
+                                    HStack(alignment: .bottom) {
+                                        Text("Powered by AI agents.")
+                                            .font(.system(size: 16))
+                                            .foregroundColor(CSColor.black)
+                                        Spacer()
+                                        Text("Start")
+                                            .padding(.horizontal, 20)
+                                            .padding(.vertical, 10)
+                                            .background(CSColor.blue)
+                                            .cornerRadius(30)
+                                            .font(.system(size: 14))
+                                            .foregroundColor(CSColor.white)
+                                            .shadow(color: .white, radius: 2)
+                                            .bold()
+                                    }
                                 }
+                                .padding(24)
                             }
-                            .padding(24)
-                        }
-                    )
-                    .shadow(color: CSColor.white, radius: 8)
-                //                .buttonStyle(ButtonStyleScaleText())
+                        )
+                        .shadow(color: CSColor.white, radius: 8)
+                    //                .buttonStyle(ButtonStyleScaleText())
+                }
+                .padding(.horizontal, 20)
+                //                Rectangle()
+                //                    .fill(CSColor.black)
+                //                    .padding(.top, 20)
+                VStack {
+                    TransactionListItem()
+                    TransactionListItem()
+                    TransactionListItem()
+                    TransactionListItem()
+                    TransactionListItem()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 32)
+                Spacer()
             }
-            .padding(.horizontal, 20)
-            //                Rectangle()
-            //                    .fill(CSColor.black)
-            //                    .padding(.top, 20)
-            VStack {
-                TransactionListItem()
-                TransactionListItem()
-                TransactionListItem()
-                TransactionListItem()
-                TransactionListItem()
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 32)
-            Spacer()
+            .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
         .ignoresSafeArea(edges: .bottom)
     }
 }

@@ -19,7 +19,7 @@ struct Bars: View {
                     VStack {
                         Rectangle()
                             .fill(index == highlightedIndex ? CSColor.blue : CSColor.gray)
-                            .frame(width: 4, height: CGFloat(data[index]) * 3)
+                            .frame(width: 8, height: CGFloat(data[index]) * 3)
                         Text(labels[index])
                             .font(.caption)
                             .foregroundStyle(CSColor.gray)

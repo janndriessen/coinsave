@@ -7,7 +7,19 @@
 
 import SwiftUI
 
+enum Selection: String, CaseIterable, Identifiable {
+    case daily = "Daily"
+    case weekly = "Weekly"
+    case monthly = "Monthly"
+    
+    var id: String { self.rawValue }
+}
+
 struct Dash: View {
+    @State private var showModal = false
+    @State private var amount: String = ""
+    @State private var selectedOption: Selection = .daily
+
     var body: some View {
         ScrollView {
             VStack {
@@ -37,10 +49,9 @@ struct Dash: View {
                             .opacity(0.5)
                         Spacer()
                     }
-                    RoundedRectangle(cornerRadius: 30)
+                    RoundedRectangle(cornerRadius: 25)
                         .fill(CSColor.gray.opacity(0.1))
                         .frame(height: 150)
-                    //                .cornerRadius(15)
                         .overlay(
                             ZStack(alignment: .leading) {
                                 VStack(alignment: .leading) {
@@ -68,7 +79,9 @@ struct Dash: View {
                             }
                         )
                         .shadow(color: CSColor.white, radius: 8)
-                    //                .buttonStyle(ButtonStyleScaleText())
+                        .onTapGesture {
+                            showModal.toggle()
+                        }
                 }
                 .padding(.horizontal, 20)
                 //                Rectangle()
@@ -88,6 +101,47 @@ struct Dash: View {
             .frame(maxWidth: .infinity)
         }
         .ignoresSafeArea(edges: .bottom)
+        .sheet(isPresented: $showModal) {
+            ZStack {
+                CSColor.white.edgesIgnoringSafeArea(.all)
+                VStack(spacing: 20) {
+                    Text("Save Bitcoin on autopilot by using dollar cost averaging powered by our AI agents.")
+                        .font(.system(size: 32))
+                        .foregroundColor(CSColor.black)
+                        .bold()
+                        .padding(.top, 32)
+                    Text("Select a frequency and amount to invest.")
+                        .font(.system(size: 16))
+                        .foregroundStyle(CSColor.black)
+                    Picker("Select Frequency", selection: $selectedOption) {
+                        ForEach(Selection.allCases) { option in
+                            Text(option.rawValue).tag(option)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    TextField("10.00 USD", text: $amount)
+                        .font(.system(size: 64))
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .padding()
+                        .keyboardType(.decimalPad)
+                    Text("USDC")
+                        .font(.system(size: 16))
+                        .foregroundStyle(CSColor.black)
+                    Spacer()
+                    Button(action: {
+                        showModal.toggle()
+                    }) {
+                        Text("Start")
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(minWidth: 150)
+                            .background(Color.blue)
+                            .cornerRadius(30)
+                    }
+                }
+                .padding(20)
+            }
+        }
     }
 }
 

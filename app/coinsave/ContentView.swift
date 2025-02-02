@@ -12,20 +12,24 @@ struct ContentView: View {
     var body: some View {
         VStack {
             if shouldTransition {
-                // TODO:
-                Text("Dashboard")
+                Dash()
                     .transition(.opacity)
             } else {
                 ZStack {
                     CSColor.white.edgesIgnoringSafeArea(.all)
                     VStack {
+                        Spacer()
                         Text("coinsave")
                             .foregroundStyle(CSColor.darkGray)
                             .font(.system(size: 36))
                             .bold()
+                        Spacer()
                         Button(action: {
-                            withAnimation(.easeIn) {
-                                shouldTransition = true
+                            Task.init {
+                                try? await Task.sleep(nanoseconds: 2_500_000_000)
+                                withAnimation(.easeIn) {
+                                    shouldTransition = true
+                                }
                             }
                         }) {
                             Text("create")
@@ -36,7 +40,6 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(30)
                                 .scaleEffect(1.0)
-                //                .rotationEffect(.degrees(isPressed ? 5 : 0))
                                 .shadow(color: .gray.opacity(0.5), radius: 10, x: 5, y: 5)
                         }
                         .buttonStyle(PlainButtonStyle())

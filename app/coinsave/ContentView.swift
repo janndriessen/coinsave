@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isLoading = false
     @State private var shouldTransition = false
     var body: some View {
         VStack {
@@ -25,36 +26,37 @@ struct ContentView: View {
                             .bold()
                         Spacer()
                         Button(action: {
-                            Task.init {
+                            Task {
+                                isLoading = true
                                 try? await Task.sleep(nanoseconds: 2_500_000_000)
                                 withAnimation(.easeIn) {
+                                    isLoading = false
                                     shouldTransition = true
                                 }
                             }
                         }) {
-                            Text("create")
-                                .fontWeight(.bold)
-                                .padding()
-                                .frame(width: 150, height: 60)
-                                .background(CSColor.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(30)
-                                .scaleEffect(1.0)
-                                .shadow(color: .gray.opacity(0.5), radius: 10, x: 5, y: 5)
+                            ZStack {
+                                if isLoading {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                } else {
+                                    Text("Create")
+                                        .fontWeight(.bold)
+                                }
+                            }
+                            .padding()
+                            .frame(width: 150, height: 60)
+                            .background(CSColor.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(30)
+                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 5, y: 5)
                         }
                         .buttonStyle(PlainButtonStyle())
-                        
+                        .disabled(isLoading)
                     }
                     .padding()
                 }
             }
-        }
-        .onAppear {
-//            Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { _ in
-//                withAnimation(.easeIn) {
-//                    shouldTransition = true
-//                }
-//            }
         }
     }
 }

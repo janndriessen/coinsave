@@ -44,7 +44,7 @@ struct Dash: View {
                         .overlay(
                             ZStack(alignment: .leading) {
                                 VStack(alignment: .leading) {
-                                    Text("Start saving Bitcoin for the best price with autopilot by coinsave.")
+                                    Text("Start saving Bitcoin for the best price on autopilot with coinsave.")
                                         .font(.system(size: 20))
                                         .foregroundColor(CSColor.black)
                                     Spacer()

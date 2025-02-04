@@ -15,10 +15,25 @@ enum Selection: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+class DCAPopupViewModel: ObservableObject {
+    @Published var isLoading = false
+    private let api = CSApi()
+
+    @MainActor
+    func updateDcaConfig() async {
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+        let config = CSApi.DcaConfig(account: "0x0", inputAmount: "10000")
+        let success = try? await api.putDcaConfig(config)
+        print("Updated DCA config with success: \(success ?? false)")
+    }
+}
+
 struct DCAPopup: View {
     @Binding var isPresented: Bool
     @State private var amount: String = ""
     @State private var selectedOption: Selection = .daily
+    @State private var isLoading = false
+    @ObservedObject var viewModel = DCAPopupViewModel()
 
     var body: some View {
         ZStack {
@@ -46,14 +61,27 @@ struct DCAPopup: View {
                 .pickerStyle(SegmentedPickerStyle())
                 Spacer()
                 Button(action: {
-                    isPresented.toggle()
+                    Task.init {
+                        isLoading = true
+                        await viewModel.updateDcaConfig()
+                        isLoading = false
+                    }
                 }) {
-                    Text("Start")
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(minWidth: 150)
-                        .background(CSColor.blue)
-                        .cornerRadius(30)
+                    ZStack {
+                        if isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else {
+                            Text("Start")
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .padding()
+                    .frame(width: 150, height: 60)
+                    .background(CSColor.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(30)
+                    .shadow(color: .gray.opacity(0.5), radius: 10, x: 5, y: 5)
                 }
             }
             .padding(20)

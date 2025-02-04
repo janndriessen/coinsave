@@ -47,6 +47,22 @@ class CSApi {
         return "\(BasedUtils.formatUnits(BigInt(balance.balance) ?? BigInt(0), balance.decimals))"
     }
 
+    // MARK: PUT /dca
+
+    struct DcaConfig: Encodable {
+        let account: String
+        let inputAmount: String
+    }
+
+    func putDcaConfig(_ config: DcaConfig) async throws -> Bool {
+        guard let url = URL(string: "\(baseUrl)/dca") else { throw CSApiError.invalidConfig }
+        let request = try createPutRequest(url: url, params: config)
+        let (_, res) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = res as? HTTPURLResponse else { return false}
+        let statusCode = httpResponse.statusCode
+        return !(statusCode < 200 || statusCode > 299)
+    }
+
     // MARK: - Internal
 
     internal func createGetRequest(url: URL) throws -> URLRequest {
@@ -55,6 +71,26 @@ class CSApi {
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "accept")
         request.setValue("application/json", forHTTPHeaderField: "content-type")
+        return request
+    }
+
+    internal func createPutRequest<T: Encodable>(url: URL, params: T) throws -> URLRequest {
+        print(url.absoluteString)
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.httpBody = try JSONEncoder().encode(params)
+        return request
+    }
+
+    internal func createPostRequest<T: Encodable>(url: URL, params: T) throws -> URLRequest {
+        print(url.absoluteString)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.httpBody = try JSONEncoder().encode(params)
         return request
     }
 }

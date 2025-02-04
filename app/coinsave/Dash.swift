@@ -7,7 +7,21 @@
 
 import SwiftUI
 
+class DashViewModel: ObservableObject {
+    @Published var formattedBalance = ""
+    private let api = CSApi()
+
+    @MainActor
+    func fetchData() {
+        Task.init {
+            let balance = (try? await api.getBalance(for: "0xb125E6687d4313864e53df431d5425969c15Eb2F")) ?? "-"
+            formattedBalance = balance
+        }
+    }
+}
+
 struct Dash: View {
+    @ObservedObject var viewModel = DashViewModel()
     @State private var showModal = false
 
     var body: some View {
@@ -19,7 +33,7 @@ struct Dash: View {
                             .font(.system(size: 38))
                             .foregroundStyle(CSColor.blue)
                             .bold()
-                        Text("0.000005")
+                        Text(viewModel.formattedBalance)
                             .font(.system(size: 32))
                             .foregroundStyle(CSColor.black)
                     }
@@ -91,6 +105,9 @@ struct Dash: View {
             .frame(maxWidth: .infinity)
         }
         .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            viewModel.fetchData()
+        }
         .sheet(isPresented: $showModal) {
             DCAPopup(isPresented: $showModal)
         }

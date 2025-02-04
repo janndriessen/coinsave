@@ -63,6 +63,33 @@ class CSApi {
         return !(statusCode < 200 || statusCode > 299)
     }
 
+    // MARK: - POST /init
+
+    struct AccountRequest: Encodable {}
+
+    struct AccountResponse: Decodable {
+        let account: String
+    }
+
+    func postInitAgent() async throws -> String {
+        guard let url = URL(string: "\(baseUrl)/account") else { throw CSApiError.invalidConfig }
+        let request = try createPostRequest(url: url, params: AccountRequest())
+        let (data, res) = try await URLSession.shared.data(for: request)
+        if let httpResponse = res as? HTTPURLResponse {
+            let statusCode = httpResponse.statusCode
+            print("error \(httpResponse.statusCode)")
+            if statusCode == 404 {
+                throw CSApiError.notFound
+            }
+            if statusCode < 200 || statusCode > 299 {
+                print("Error fetching account data")
+                throw CSApiError.unknown
+            }
+        }
+        let json = try JSONDecoder().decode(AccountResponse.self, from: data)
+        return json.account
+    }
+
     // MARK: - Internal
 
     internal func createGetRequest(url: URL) throws -> URLRequest {

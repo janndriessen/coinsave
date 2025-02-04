@@ -7,9 +7,23 @@
 
 import SwiftUI
 
+class LaunchViewModel: ObservableObject {
+    @Published var isLoading = false
+    private let api = CSApi()
+
+    @MainActor
+    func createAgent() async {
+        isLoading = true
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+        let account = try? await api.postInitAgent()
+        print("Created agent with address: \(account ?? "n/a")")
+        isLoading = false
+    }
+}
+
 struct Launch: View {
     @Binding var shouldTransition: Bool
-    @State private var isLoading = false
+    @ObservedObject private var viewModel = LaunchViewModel()
 
     var body: some View {
         ZStack {
@@ -23,16 +37,14 @@ struct Launch: View {
                 Spacer()
                 Button(action: {
                     Task {
-                        isLoading = true
-                        try? await Task.sleep(nanoseconds: 2_500_000_000)
+                        await viewModel.createAgent()
                         withAnimation(.easeIn) {
-                            isLoading = false
                             shouldTransition = true
                         }
                     }
                 }) {
                     ZStack {
-                        if isLoading {
+                        if viewModel.isLoading {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         } else {
@@ -48,7 +60,7 @@ struct Launch: View {
                     .shadow(color: .gray.opacity(0.5), radius: 10, x: 5, y: 5)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .disabled(isLoading)
+                .disabled(viewModel.isLoading)
             }
             .padding()
         }

@@ -5,17 +5,23 @@
 //  Created by Jann Driessen on 31.01.25.
 //
 
+import BasedUtils
+import BigInt
 import SwiftUI
 
 class DashViewModel: ObservableObject {
     @Published var formattedBalance = ""
+    @Published var transactions = [CSApi.Transaction]()
     private let api = CSApi()
 
     @MainActor
     func fetchData() {
         Task.init {
-            let balance = (try? await api.getBalance(for: "0xb125E6687d4313864e53df431d5425969c15Eb2F")) ?? "-"
+            let account = "0xb125E6687d4313864e53df431d5425969c15Eb2F"
+            let balance = (try? await api.getBalance(for: account)) ?? "-"
             formattedBalance = balance
+            let transactions = (try? await api.getTransactions(for: account)) ?? []
+            self.transactions = transactions
         }
     }
 }
@@ -92,11 +98,11 @@ struct Dash: View {
                 //                    .fill(CSColor.black)
                 //                    .padding(.top, 20)
                 VStack {
-                    TransactionListItem()
-                    TransactionListItem()
-                    TransactionListItem()
-                    TransactionListItem()
-                    TransactionListItem()
+                    ForEach(viewModel.transactions.indices, id: \.self) { index in
+                        TransactionListItem(
+                            transaction: viewModel.transactions[index]
+                        )
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 32)
@@ -115,14 +121,15 @@ struct Dash: View {
 }
 
 struct TransactionListItem: View {
+    let transaction: CSApi.Transaction
     @State private var currentDate = Date()
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(dateString(from: currentDate))
+                Text(transaction.dateFormatted)
                     .font(.headline)
                     .foregroundStyle(CSColor.black)
-                Text(timeString(from: currentDate))
+                Text(transaction.timeFormatted)
                     .font(.subheadline)
                     .foregroundStyle(CSColor.darkGray)
             }
@@ -131,7 +138,7 @@ struct TransactionListItem: View {
                 Text("cbBTC")
                     .font(.headline)
                     .foregroundStyle(CSColor.blue)
-                Text("0.000001")
+                Text(BasedUtils.formatUnits(BigInt(transaction.amount) ?? BigInt(0), 8))
                     .font(.subheadline)
                     .foregroundStyle(CSColor.darkGray)
             }

@@ -90,6 +90,34 @@ class CSApi {
         return json.account
     }
 
+    // MARK: - POST /transactions
+
+    struct Transaction: Decodable {
+        let timestamp: String
+        let amount: String
+        let dateFormatted: String
+        let timeFormatted: String
+    }
+
+    struct TransactionResponse: Decodable {
+        let transactions: [Transaction]
+    }
+
+    func getTransactions(for account: String) async throws -> [Transaction] {
+        guard let url = URL(string: "\(baseUrl)/transactions?account=\(account)") else { throw CSApiError.invalidConfig }
+//        let request = try createGetRequest(url: url)
+//        let (data, _) = try await URLSession.shared.data(for: request)
+//        let res = try JSONDecoder().decode(TransactionResponse.self, from: data)
+//        return res.transactions
+        return [
+            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+        ]
+    }
+
     // MARK: - Internal
 
     internal func createGetRequest(url: URL) throws -> URLRequest {

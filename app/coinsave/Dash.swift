@@ -48,8 +48,7 @@ struct Dash: View {
                 }
                 .padding(.top, 40)
                 HStack {
-                    Bars()
-                    Bars()
+                    Bars(data: [])
                 }
                 .padding(.bottom, 48)
                 ZStack {

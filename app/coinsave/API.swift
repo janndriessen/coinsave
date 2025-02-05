@@ -110,11 +110,16 @@ class CSApi {
 //        let res = try JSONDecoder().decode(TransactionResponse.self, from: data)
 //        return res.transactions
         return [
-            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "1000", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "100", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "200", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "750", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "600", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "650", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "700", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "670", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
         ]
     }
 

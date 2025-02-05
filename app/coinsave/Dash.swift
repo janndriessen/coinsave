@@ -14,6 +14,12 @@ class DashViewModel: ObservableObject {
     @Published var transactions = [CSApi.Transaction]()
     private let api = CSApi()
 
+    var bars: [Bar] {
+        return transactions.map {
+            return Bar(data: (Double($0.amount) ?? 0.0) / 20, label: String($0.dateFormatted.split(separator: "-")[2]))
+        }
+    }
+
     @MainActor
     func fetchData() {
         Task.init {
@@ -48,7 +54,7 @@ struct Dash: View {
                 }
                 .padding(.top, 40)
                 HStack {
-                    Bars(data: [])
+                    Bars(data: viewModel.bars)
                 }
                 .padding(.bottom, 48)
                 ZStack {

@@ -13,14 +13,12 @@ import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";
 import * as fs from "fs";
-import { signer } from "../actions/signer";
 import { Agent } from "../utils/types";
-import { dallETool } from "../tools/dallee";
 
 const WALLET_DATA_FILE = "wallet_data.json";
 
 
-export async function initializeChatBot(): Promise<Agent> {
+export async function initializeWalletAgent(): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -64,16 +62,15 @@ export async function initializeChatBot(): Promise<Agent> {
         apiKeyName: process.env.CDP_API_KEY_NAME,
         apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       }),
-      signer(),
     ],
   });
 
 
-  const tools = [ ... await getLangChainTools(agentkit), dallETool];
+  const tools = [... await getLangChainTools(agentkit)];
 
   // Store buffered conversation history in memory
   const memory = new MemorySaver();
-  const config = { configurable: { thread_id: "Trick of all traits agent featuring dallE based on chatbot example" } };
+  const config = { configurable: { thread_id: "Agent with on-chain capabilities" } };
 
   // Create React Agent using the LLM and CDP AgentKit tools
   const agent = createReactAgent({

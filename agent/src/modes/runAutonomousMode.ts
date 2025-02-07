@@ -1,8 +1,8 @@
 import { HumanMessage } from "@langchain/core/messages";
-import { ChatBot } from "../utils/types";
+import { Agent } from "../utils/types";
 
 
-export async function runAutonomousMode(chatBots: ChatBot[], interval = 10) {
+export async function runAutonomousMode(agents: Agent[], interval = 10) {
   console.log("Starting autonomous mode...");
 
   while (true) {
@@ -11,9 +11,9 @@ export async function runAutonomousMode(chatBots: ChatBot[], interval = 10) {
         "Be creative and do something interesting on the blockchain. " +
         "Choose an action or set of actions and execute it that highlights your abilities.";
 
-      for (let i = 0; i < chatBots.length; i++) {
-        const agent = chatBots[i].agent;
-        const config = chatBots[i].config;
+      for (let i = 0; i < agents.length; i++) {
+        const agent = agents[i].agent;
+        const config = agents[i].config;
 
         const stream = await agent.stream({ messages: [new HumanMessage(thought)] }, config);
 

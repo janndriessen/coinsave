@@ -4,6 +4,8 @@ import { initializeChatBot } from './agents/chatbot';
 import { runAutonomousMode } from './modes/runAutonomousMode';
 import { chooseMode } from './modes/chooseMode';
 import { runChatMode } from './modes/runChatMode';
+import { initializeWalletAgent } from './agents/walletAgent';
+import { initializePriceAgent } from './agents/priceAgent';
 
 dotenv.config();
 validateEnvironment();
@@ -11,16 +13,19 @@ validateEnvironment();
 
 
 async function main() {
-    const chatBot = await initializeChatBot();
+  
+  const agents = [
+    await initializeChatBot(),
+    await initializePriceAgent(),
+    await initializeWalletAgent()
+  ];
 
-    const agents = [chatBot];
-
-    const mode = await chooseMode();
-  if (mode === "auto") {
-    await runAutonomousMode(agents);
-  } else {
+  // const mode = await chooseMode();
+  // if (mode === "auto") {
+  //  await runAgents(agents);
+    // } else {
     await runChatMode(agents);
-  }
+  // }
 }
 
 if (require.main === module) {

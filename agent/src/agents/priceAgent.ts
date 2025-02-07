@@ -13,37 +13,23 @@ import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";
 import * as fs from "fs";
-import { signer } from "../actions/signer";
 import { Agent } from "../utils/types";
-import { dallETool } from "../tools/dallee";
 
 const WALLET_DATA_FILE = "wallet_data.json";
 
 
-export async function initializeChatBot(): Promise<Agent> {
+export async function initializePriceAgent(): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini",
   });
 
-  let walletDataStr: string | null = null;
-
-  // Read existing wallet data if available
-  if (fs.existsSync(WALLET_DATA_FILE)) {
-    try {
-      walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
-    } catch (error) {
-      console.error("Error reading wallet data:", error);
-      // Continue without wallet data
-    }
-  }
-
   // Configure CDP Wallet Provider
   const walletConfig = {
     apiKeyName: process.env.CDP_API_KEY_NAME,
     apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    cdpWalletData: walletDataStr || undefined,
     networkId: process.env.NETWORK_ID || "base-sepolia",
+    address: process.env.WALLET_ADDRESS, // price agent does not know wallet private key
   };
 
   const walletProvider = await CdpWalletProvider.configureWithWallet(walletConfig);
@@ -64,16 +50,15 @@ export async function initializeChatBot(): Promise<Agent> {
         apiKeyName: process.env.CDP_API_KEY_NAME,
         apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       }),
-      signer(),
     ],
   });
 
 
-  const tools = [ ... await getLangChainTools(agentkit), dallETool];
+  const tools = [... await getLangChainTools(agentkit)];
 
   // Store buffered conversation history in memory
   const memory = new MemorySaver();
-  const config = { configurable: { thread_id: "Trick of all traits agent featuring dallE based on chatbot example" } };
+  const config = { configurable: { thread_id: "Price Agent" } };
 
   // Create React Agent using the LLM and CDP AgentKit tools
   const agent = createReactAgent({
@@ -81,15 +66,8 @@ export async function initializeChatBot(): Promise<Agent> {
     tools: tools,
     checkpointSaver: memory,
     messageModifier: `
-          You are a helpful agent that can interact onchain using the Coinbase Developer Platform AgentKit. You are 
-          empowered to interact onchain using your tools. If you ever need funds, you can request them from the 
-          faucet if you are on network ID 'base-sepolia'. If not, you can provide your wallet details and request 
-          funds from the user. Before executing your first action, get the wallet details to see what network 
-          you're on. If there is a 5XX (internal) HTTP error code, ask the user to try again later. If someone 
-          asks you to do something you can't do with your currently available tools, you must say so, and 
-          encourage them to implement it themselves using the CDP SDK + Agentkit, recommend they go to 
-          docs.cdp.coinbase.com for more information. Be concise and helpful with your responses. Refrain from 
-          restating your tools' descriptions unless it is explicitly requested.
+          You are a helpful agent that tells me wether to to buy bitcoin. Whatever I ask you, you should answer with a "yes" or "no".
+          If you dont know the answer, you must give a random reponse. Any other reponse is not allowed.
           `,
   });
 

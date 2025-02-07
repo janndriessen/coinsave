@@ -1,7 +1,7 @@
 import * as readline from "readline";
-import { ChatBot } from "../utils/types";
+import { Agent } from "../utils/types";
 
-export async function chooseModel(chatBots: ChatBot[]): Promise<number> {
+export async function chooseModel(chatBots: Agent[]): Promise<number> {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,

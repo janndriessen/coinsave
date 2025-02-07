@@ -29,4 +29,4 @@ class SignProvider extends ActionProvider<WalletProvider> {
     supportsNetwork = (network: Network) => true;
 }
 
-export const Signer = () => new SignProvider();
+export const signer = () => new SignProvider();

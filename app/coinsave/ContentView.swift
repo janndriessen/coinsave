@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var shouldTransition = false
+
     var body: some View {
         VStack {
             if shouldTransition {

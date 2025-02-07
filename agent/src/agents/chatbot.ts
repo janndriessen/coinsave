@@ -15,12 +15,12 @@ import { ChatOpenAI } from "@langchain/openai";
 import * as fs from "fs";
 import { Signer } from "../actions/signer";
 import { DallEAPIWrapper } from "@langchain/openai";
-import { InitializationResult } from "../utils/types";
+import { ChatBot } from "../utils/types";
 
 const WALLET_DATA_FILE = "wallet_data.json";
 
 
-export async function initializeChatBot(): Promise<InitializationResult> {
+export async function initializeChatBot(): Promise<ChatBot> {
   // Initialize LLM
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini",

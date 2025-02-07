@@ -1,8 +1,8 @@
 import { HumanMessage } from "@langchain/core/messages";
-import { InitializationResult } from "../utils/types";
+import { ChatBot } from "../utils/types";
 
 
-export async function runAutonomousMode(chatBots: InitializationResult[], interval = 10) {
+export async function runAutonomousMode(chatBots: ChatBot[], interval = 10) {
   console.log("Starting autonomous mode...");
 
   while (true) {

@@ -1,6 +1,6 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
-export interface InitializationResult {
+export interface ChatBot {
   agent: ReturnTypeOfReatReactAgent;
   config: Config;
 }

@@ -1,12 +1,14 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { Agent } from "../utils/types";
 
-export async function runAgentsInAutonomousMode(_oracleAgent: Agent, _walletAgent: Agent, amount = 1, interval = 10) {
+const SECOND_PER_MONTH = 30 * 24 * 60 * 60 * 1000;
+
+export async function runAgentsInAutonomousMode(_oracleAgent: Agent, _walletAgent: Agent, amountPerEpoch = 300, epochLength = SECOND_PER_MONTH, interval = 10) {
   console.log("Starting autonomous mode...");
 
   while (true) {
     try {
-      await runAgents(_oracleAgent, _walletAgent, amount);
+      await runAgents(_oracleAgent, _walletAgent, amountPerEpoch);
       const timeout = interval * 1000; // Convert interval to seconds
       await new Promise(resolve => setTimeout(resolve, timeout));
     } catch (error) {

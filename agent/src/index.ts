@@ -1,11 +1,12 @@
 import * as dotenv from 'dotenv';
 import Fastify from 'fastify';
-import { validateAutonomousMode, validateEnvironment } from './utils/config';
+import {validateEnvironment } from './utils/config';
 import { initializeChatBot } from './agents/chatbot';
 import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
 import { initializeOracleAgent } from './agents/oracleAgent';
 import { runAgentsInAutonomousMode } from './modes/runAgents';
+
 import { configureWallet } from './utils/wallet';
 import type { Agent } from './utils/types';
 
@@ -28,7 +29,6 @@ async function main(): Promise<Agent[]> {
 
   if (mode === 'auto') {
     console.log('Starting autonomous mode...');
-    validateAutonomousMode();
     await runAgentsInAutonomousMode(agents[0], agents[1]);
   } else {
     console.log('Starting chat mode...');
@@ -47,7 +47,7 @@ startAgents();
 const fastify = Fastify({ logger: true });
 
 fastify.put('/update-dca', async (request, reply) => {
-  // const { message } = request.body;
+  const { message } = request.body;
   console.log(request.body);
 
   // if (!message) {

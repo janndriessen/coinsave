@@ -23,6 +23,8 @@ export async function runAgents(_oracleAgent: Agent, _walletAgent: Agent, amount
 
   const shouldBuyBitcoin = await buyOrNotToBuy(_oracleAgent);
 
+  let bitcoinAmount; // query amount bought amount target;
+  
   if (shouldBuyBitcoin) {
     console.log("Buying Bitcoin ....");
     // await buyBitcoin(_walletAgent);

@@ -7,16 +7,19 @@ import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
 import { initializeOracleAgent } from './agents/oracleAgent';
 import { runAgentsInAutonomousMode } from './modes/runAgents';
+import { configureWallet } from './utils/wallet';
 
 dotenv.config();
 validateEnvironment();
 
 async function main() {
 
+  const wallet = await configureWallet();
+  
   const agents = [
     await initializeOracleAgent(),
-    await initializeWalletAgent(),
-    await initializeChatBot(),
+    await initializeWalletAgent(wallet),
+    await initializeChatBot(wallet),
   ];
 
   //const mode = await chooseMode();

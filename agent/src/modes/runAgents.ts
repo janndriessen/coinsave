@@ -1,9 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { Agent } from "../utils/types";
 
-const SECOND_PER_MONTH = 30 * 24 * 60 * 60 * 1000;
-
-export async function runAgentsInAutonomousMode(_oracleAgent: Agent, _walletAgent: Agent, amountPerEpoch = 300, epochLength = SECOND_PER_MONTH, interval = 10) {
+export async function runAgentsInAutonomousMode(_oracleAgent: Agent, _walletAgent: Agent, amountPerEpoch: number,  interval: number , epochLength: number) {
   console.log("Starting autonomous mode...");
 
   while (true) {

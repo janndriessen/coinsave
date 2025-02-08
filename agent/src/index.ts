@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import Fastify from 'fastify';
-import {validateEnvironment } from './utils/config';
+import { validateEnvironment } from './utils/config';
 import { initializeChatBot } from './agents/chatbot';
 import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
@@ -13,9 +13,8 @@ import type { Agent } from './utils/types';
 dotenv.config();
 validateEnvironment();
 
-let agents: Agent[];
 
-async function main(): Promise<Agent[]> {
+async function startAgents(amountPerEpoch: number, interval: number, epochLength: number): Promise<Agent[]> {
   const wallet = await configureWallet();
 
   const agents = [
@@ -24,31 +23,25 @@ async function main(): Promise<Agent[]> {
     await initializeChatBot(wallet),
   ];
 
-  //const mode = await chooseMode();
-  const mode = process.env.INTERACTIVE_MODE === 'true' ? 'chat' : 'auto';
 
-  if (mode === 'auto') {
-    console.log('Starting autonomous mode...');
-    await runAgentsInAutonomousMode(agents[0], agents[1]);
-  } else {
-    console.log('Starting chat mode...');
-    await runChatMode(agents);
-  }
+  console.log('Starting autonomous mode...');
+  await runAgentsInAutonomousMode(agents[0], agents[1], amountPerEpoch, interval, epochLength);
 
   return agents;
 }
 
-async function startAgents() {
-  agents = await main();
+const fastify = Fastify({ logger: true });
+interface UpdateDCARequestBody {
+  amountPerEpoch: number;
+  interval: number;
+  epochLength: number;
 }
 
-startAgents();
-
-const fastify = Fastify({ logger: true });
-
 fastify.put('/update-dca', async (request, reply) => {
-  const { message } = request.body;
+  const { amountPerEpoch, interval, epochLength } = request.body as UpdateDCARequestBody;
   console.log(request.body);
+
+  await startAgents(amountPerEpoch, interval, epochLength);
 
   // if (!message) {
   //   return reply.status(400).send({ error: 'Message is required' });

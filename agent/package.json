@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "INTERACTIVE_MODE=false NODE_OPTIONS='--no-warnings' ts-node ./src/index.ts",
-    "start:i": "INTERACTIVE_MODE=true NODE_OPTIONS='--no-warnings' ts-node ./src/index.ts",
+    "start:i": "INTERACTIVE_MODE=true NODE_OPTIONS='--no-warnings' ts-node ./src/scripts/runChatMode.ts",
     "dev": "nodemon ./src/index.ts",
     "lint": "eslint 'src/**/*.ts'",
     "lint-fix": "eslint 'src/**/*.ts' --fix",

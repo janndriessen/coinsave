@@ -15,6 +15,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { signer } from "../actions/signer";
 import { Agent } from "../utils/types";
 import { dallETool } from "../tools/dallee";
+import { basescan } from "../actions/basescan";
 
 
 export async function initializeChatBot(walletProvider: CdpWalletProvider): Promise<Agent> {
@@ -40,6 +41,7 @@ export async function initializeChatBot(walletProvider: CdpWalletProvider): Prom
         apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       }),
       signer(),
+      basescan()
     ],
   });
 

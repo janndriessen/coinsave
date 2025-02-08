@@ -6,6 +6,7 @@ import { chooseMode } from './modes/chooseMode';
 import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
 import { initializePriceAgent } from './agents/priceAgent';
+import { runAgents } from './modes/runAgents';
 
 dotenv.config();
 validateEnvironment();
@@ -13,19 +14,24 @@ validateEnvironment();
 
 
 async function main() {
-  
+
   const agents = [
-    await initializeChatBot(),
     await initializePriceAgent(),
-    await initializeWalletAgent()
+    await initializeWalletAgent(),
+    await initializeChatBot(),
   ];
 
-  // const mode = await chooseMode();
-  // if (mode === "auto") {
-  //  await runAgents(agents);
-    // } else {
+  //const mode = await chooseMode();
+  const mode = process.env.INTERACTIVE_MODE === 'true' ? "chat" : "auto";
+
+  if (mode === "auto") {
+    console.log("Starting autonomous mode...");
+    await runAgents(agents[0], agents[1]);
+  } else {
+    console.log("Starting chat mode...");
     await runChatMode(agents);
-  // }
+  }
+
 }
 
 if (require.main === module) {

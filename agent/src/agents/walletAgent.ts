@@ -15,7 +15,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import * as fs from "fs";
 import { Agent } from "../utils/types";
 
-const WALLET_DATA_FILE = "wallet_data.json";
+const WALLET_DATA_FILE = "wallet_data.txt";
 
 
 export async function initializeWalletAgent(): Promise<Agent> {
@@ -26,6 +26,7 @@ export async function initializeWalletAgent(): Promise<Agent> {
 
   let walletDataStr: string | null = null;
 
+  
   // Read existing wallet data if available
   if (fs.existsSync(WALLET_DATA_FILE)) {
     try {

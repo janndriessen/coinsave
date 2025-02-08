@@ -17,8 +17,8 @@ import { signer } from "../actions/signer";
 import { Agent } from "../utils/types";
 import { dallETool } from "../tools/dallee";
 
-const WALLET_DATA_FILE = "wallet_data.json";
-
+// Configure a file to persist the agent's CDP MPC Wallet Data
+const WALLET_DATA_FILE = "wallet_data.txt";
 
 export async function initializeChatBot(): Promise<Agent> {
   // Initialize LLM

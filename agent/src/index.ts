@@ -23,7 +23,6 @@ async function startAgents(amountPerEpoch: number, interval: number, epochLength
     await initializeChatBot(wallet),
   ];
 
-
   console.log('Starting autonomous mode...');
   await runAgentsInAutonomousMode(agents[0], agents[1], amountPerEpoch, interval, epochLength);
 
@@ -43,12 +42,6 @@ fastify.put('/update-dca', async (request, reply) => {
 
   await startAgents(amountPerEpoch, interval, epochLength);
 
-  // if (!message) {
-  //   return reply.status(400).send({ error: 'Message is required' });
-  // }
-
-  // TODO: Send user message to the agent
-  // const response = await agents[1].chat([{ role: 'user', content: message }]);
   console.log('hello');
 
   return reply.send({ response: 'hello' });

@@ -6,7 +6,7 @@ import { chooseMode } from './modes/chooseMode';
 import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
 import { initializePriceAgent } from './agents/priceAgent';
-import { runAgents } from './modes/runAgents';
+import { runAgentsInAutonomousMode } from './modes/runAgents';
 
 dotenv.config();
 validateEnvironment();
@@ -25,7 +25,7 @@ async function main() {
   if (mode === "auto") {
     console.log("Starting autonomous mode...");
     validateAutonomousMode();
-    await runAgents(agents[0], agents[1]);
+    await runAgentsInAutonomousMode(agents[0], agents[1]);
   } else {
     console.log("Starting chat mode...");
     await runChatMode(agents);

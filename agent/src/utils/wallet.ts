@@ -23,7 +23,7 @@ export async function configureWallet(): Promise<CdpWalletProvider> {
         '\n'
       ),
       cdpWalletData: walletDataStr || undefined,
-      networkId: process.env.NETWORK_ID || 'base-sepolia',
+      networkId: 'base-mainnet',
     };
     const provider = await CdpWalletProvider.configureWithWallet(walletConfig);
     const exportedWallet = await provider.exportWallet();
@@ -39,7 +39,7 @@ export async function configureWallet(): Promise<CdpWalletProvider> {
       '\n'
     ),
     cdpWalletData: walletDataStr || undefined,
-    networkId: process.env.NETWORK_ID || 'base-sepolia',
+    networkId: 'base-mainnet',
   };
 
   return await CdpWalletProvider.configureWithWallet(walletConfig);

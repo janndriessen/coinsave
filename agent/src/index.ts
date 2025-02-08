@@ -16,7 +16,7 @@ async function main() {
   const wallet = await configureWallet();
   
   const agents = [
-    await initializeOracleAgent(),
+    await initializeOracleAgent(wallet),
     await initializeWalletAgent(wallet),
     await initializeChatBot(wallet),
   ];

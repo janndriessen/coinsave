@@ -23,10 +23,12 @@ export async function runAgents(_oracleAgent: Agent, _walletAgent: Agent, amount
 
   const shouldBuyBitcoin = await buyOrNotToBuy(_oracleAgent);
 
-  let bitcoinAmount; // query amount bought amount target;
+  // query amount bought amount target;
   
   if (shouldBuyBitcoin) {
-    console.log("Buying Bitcoin ....");
+    let bitcoinAmount = await buyAmount(_walletAgent);
+
+    console.log(`Buying ${bitcoinAmount }Bitcoin ....`);
     // await buyBitcoin(_walletAgent);
   } else {
     console.log("Not buying Bitcoin ...");
@@ -86,4 +88,39 @@ async function buyOrNotToBuy(_oracleAgent: Agent): Promise<boolean> {
     console.log("Buy Bitcoin: ", buyBitcoin);
   }
   return buyBitcoin;
+}
+
+
+async function buyAmount(_walletAgent: Agent): Promise<number> {
+  const { agent: oracleAgent, config: oracleAgentConfig } = _walletAgent;
+
+  const priceQuestion = "Should i buy bitcoin?";
+  const stream = await oracleAgent.stream({ messages: [new HumanMessage(priceQuestion)] }, oracleAgentConfig);
+
+  let buyAmount: number = 0;
+  // for await (const chunk of stream) {
+
+  //   if ("agent" in chunk) {
+  //     const message = chunk.agent.messages[0].content;
+
+
+  //     try {
+  //       const messageAsString = message.toString().toLowerCase();
+
+  //       console.log("Message: ", messageAsString);
+  //       if (/yes/.test(messageAsString)) {
+  //         buyBitcoin = true;
+  //       } else if (/no/.test(messageAsString)) {
+  //         buyBitcoin = false;
+  //       } else {
+  //         console.error(messageAsString, "is not a valid response");
+  //       }
+  //     } catch {
+  //       console.error("Error parsing message");
+  //     }
+  //   }
+
+  //   console.log("Buy Bitcoin: ", buyBitcoin);
+  // }
+  return buyAmount;
 }

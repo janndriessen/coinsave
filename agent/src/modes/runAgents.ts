@@ -1,7 +1,5 @@
-import { ChatMessage, FunctionMessage, HumanMessage } from "@langchain/core/messages";
-import * as readline from "readline";
-import { Agent, Config } from "../utils/types";
-import { chooseModel } from "./chooseModel";
+import { HumanMessage } from "@langchain/core/messages";
+import { Agent } from "../utils/types";
 
 export async function runAgents(_priceAgent: Agent, _walletAgent: Agent) {
   console.log("Starting chat mode... Type 'exit' to end.");
@@ -10,7 +8,7 @@ export async function runAgents(_priceAgent: Agent, _walletAgent: Agent) {
 
   if (shouldBuyBitcoin) {
     console.log("Buying Bitcoin ....");
-    await buyBitcoin(_walletAgent);
+    // await buyBitcoin(_walletAgent);
   } else {
     console.log("Not buying Bitcoin today ...");
 

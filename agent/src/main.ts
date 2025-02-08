@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { validateEnvironment } from './utils/config';
+import { validateAutonomousMode, validateEnvironment } from './utils/config';
 import { initializeChatBot } from './agents/chatbot';
 import { runAutonomousMode } from './modes/runAutonomousMode';
 import { chooseMode } from './modes/chooseMode';
@@ -10,8 +10,6 @@ import { runAgents } from './modes/runAgents';
 
 dotenv.config();
 validateEnvironment();
-
-
 
 async function main() {
 
@@ -26,6 +24,7 @@ async function main() {
 
   if (mode === "auto") {
     console.log("Starting autonomous mode...");
+    validateAutonomousMode();
     await runAgents(agents[0], agents[1]);
   } else {
     console.log("Starting chat mode...");

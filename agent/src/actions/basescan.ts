@@ -51,7 +51,7 @@ class BasescanProvider extends ActionProvider<WalletProvider> {
 
     const fromBlock = '1844947';
     const toBlock = 'latest';
-    const topic2 = `0x000000000000000000000000${userAddress.slice(2)}`; // 0x00000000000000000000000089aAe058e78850e7A873DdD2455b8df5De540C86
+    const toAddress = `0x000000000000000000000000${userAddress.slice(2)}`;
     const page = 1;
     const offset = 1000;
 
@@ -61,7 +61,7 @@ class BasescanProvider extends ActionProvider<WalletProvider> {
       console.error('Missing BASESCAN_API_KEY');
     }
 
-    const url = `https://api.basescan.org/api?module=logs&action=getLogs&fromBlock=${fromBlock}&toBlock=${toBlock}&address=${cbBTC_ADDRESS}&topic0=${transferEventSignature}&topic0_2_opr=and&topic2=${topic2}&page=${page}&offset=${offset}&apikey=${apiKey}`;
+    const url = `https://api.basescan.org/api?module=logs&action=getLogs&fromBlock=${fromBlock}&toBlock=${toBlock}&address=${cbBTC_ADDRESS}&topic0=${transferEventSignature}&topic0_2_opr=and&topic2=${toAddress}&page=${page}&offset=${offset}&apikey=${apiKey}`;
 
     console.log('Fetching logs from:', url);
     let amountBought = BigInt(0);

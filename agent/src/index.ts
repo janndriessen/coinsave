@@ -18,8 +18,7 @@ async function main(): Promise<Agent[]> {
   const wallet = await configureWallet();
 
   const agents = [
-    // FIXME:
-    // await initializeOracleAgent(),
+    await initializeOracleAgent(wallet),
     await initializeWalletAgent(wallet),
     await initializeChatBot(wallet),
   ];

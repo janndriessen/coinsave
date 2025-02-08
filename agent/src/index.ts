@@ -1,8 +1,7 @@
 import * as dotenv from 'dotenv';
 import { validateAutonomousMode, validateEnvironment } from './utils/config';
 import { initializeChatBot } from './agents/chatbot';
-import { runAutonomousMode } from './modes/runAutonomousMode';
-import { chooseMode } from './modes/chooseMode';
+import { chooseMode } from './utils/chooseMode';
 import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
 import { initializeOracleAgent } from './agents/oracleAgent';

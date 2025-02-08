@@ -15,7 +15,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { Agent } from "../utils/types";
 
 
-export async function initializeOracleAgent(): Promise<Agent> {
+export async function initializeOracleAgent(walletProvider: CdpWalletProvider): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -23,6 +23,7 @@ export async function initializeOracleAgent(): Promise<Agent> {
 
   // Initialize AgentKit
   const agentkit = await AgentKit.from({
+    walletProvider,
     actionProviders: [
       wethActionProvider(),
       pythActionProvider(),

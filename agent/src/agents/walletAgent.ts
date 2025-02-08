@@ -12,40 +12,15 @@ import { getLangChainTools } from "@coinbase/agentkit-langchain";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";
-import * as fs from "fs";
 import { Agent } from "../utils/types";
 
-const WALLET_DATA_FILE = "wallet_data.txt";
 
-
-export async function initializeWalletAgent(): Promise<Agent> {
+export async function initializeWalletAgent(walletProvider: CdpWalletProvider): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini",
   });
 
-  let walletDataStr: string | null = null;
-
-  
-  // Read existing wallet data if available
-  if (fs.existsSync(WALLET_DATA_FILE)) {
-    try {
-      walletDataStr = fs.readFileSync(WALLET_DATA_FILE, "utf8");
-    } catch (error) {
-      console.error("Error reading wallet data:", error);
-      // Continue without wallet data
-    }
-  }
-
-  // Configure CDP Wallet Provider
-  const walletConfig = {
-    apiKeyName: process.env.CDP_API_KEY_NAME,
-    apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    cdpWalletData: walletDataStr || undefined,
-    networkId: process.env.NETWORK_ID || "base-sepolia",
-  };
-
-  const walletProvider = await CdpWalletProvider.configureWithWallet(walletConfig);
 
   const walletAddress = walletProvider.getAddress();
   const walletAddressFromEnv = process.env.WALLET_ADDRESS || "";
@@ -98,10 +73,6 @@ export async function initializeWalletAgent(): Promise<Agent> {
           restating your tools' descriptions unless it is explicitly requested.
           `,
   });
-
-  // Save wallet data
-  const exportedWallet = await walletProvider.exportWallet();
-  fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
 
   return { agent, config };
 }

@@ -1,0 +1,8 @@
+# secrets
+.env
+wallet_data.txt
+wallet_data.json
+
+# dependencies
+node_modules/
+notes/

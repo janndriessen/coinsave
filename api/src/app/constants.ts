@@ -1,1 +1,1 @@
-export const AGENT_WALLET = "0x0";
+export const AGENT_WALLET = "0x8BcA85f90A2b9F490EFC4e84B02EaE7393a69650";

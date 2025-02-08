@@ -15,8 +15,9 @@ class LaunchViewModel: ObservableObject {
     func createAgent() async {
         isLoading = true
         try? await Task.sleep(nanoseconds: 1_500_000_000)
-        let account = try? await api.postInitAgent()
-        print("Created agent with address: \(account ?? "n/a")")
+        guard let account = try? await api.postInitAgent() else { return }
+        print("Created agent with address: \(account)")
+        UserStore.accountAddress = account
         isLoading = false
     }
 }

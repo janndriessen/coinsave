@@ -23,7 +23,9 @@ class DashViewModel: ObservableObject {
     @MainActor
     func fetchData() {
         Task.init {
-            let account = "0xb125E6687d4313864e53df431d5425969c15Eb2F"
+            // test address
+//            let account = "0xb125E6687d4313864e53df431d5425969c15Eb2F"
+            let account = UserStore.accountAddress
             let balance = (try? await api.getBalance(for: account)) ?? "-"
             formattedBalance = balance
             let transactions = (try? await api.getTransactions(for: account)) ?? []

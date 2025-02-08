@@ -15,10 +15,8 @@ import { ChatOpenAI } from "@langchain/openai";
 import * as fs from "fs";
 import { Agent } from "../utils/types";
 
-const WALLET_DATA_FILE = "wallet_data.json";
 
-
-export async function initializePriceAgent(): Promise<Agent> {
+export async function initializeOracleAgent(): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini",
@@ -71,9 +69,6 @@ export async function initializePriceAgent(): Promise<Agent> {
           `,
   });
 
-  // Save wallet data
-  const exportedWallet = await walletProvider.exportWallet();
-  fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
 
   return { agent, config };
 }

@@ -12,7 +12,7 @@ export function validateEnvironment(): void {
   const missingVars: string[] = [];
 
   // Check required variables
-  const requiredVars = ["OPENAI_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
+  const requiredVars = ["OPENAI_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY", "WALLET_ADDRESS"];
 
   requiredVars.forEach((variable) => {
     if (!process.env[variable]) {

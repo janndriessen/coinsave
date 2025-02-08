@@ -47,6 +47,14 @@ export async function initializeWalletAgent(): Promise<Agent> {
 
   const walletProvider = await CdpWalletProvider.configureWithWallet(walletConfig);
 
+  const walletAddress = walletProvider.getAddress();
+  const walletAddressFromEnv = process.env.WALLET_ADDRESS || "";
+  
+  if (walletProvider.getAddress() !== walletAddressFromEnv) {
+    console.error(`Wallet address mismatch: ${walletAddress} (from provider) vs ${walletAddressFromEnv} (from env)`);
+    throw new Error("Wallet address mismatch");   
+  }
+
   // Initialize AgentKit
   const agentkit = await AgentKit.from({
     walletProvider,

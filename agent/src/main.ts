@@ -5,7 +5,7 @@ import { runAutonomousMode } from './modes/runAutonomousMode';
 import { chooseMode } from './modes/chooseMode';
 import { runChatMode } from './modes/runChatMode';
 import { initializeWalletAgent } from './agents/walletAgent';
-import { initializePriceAgent } from './agents/priceAgent';
+import { initializeOracleAgent } from './agents/oracleAgent';
 import { runAgentsInAutonomousMode } from './modes/runAgents';
 
 dotenv.config();
@@ -14,7 +14,7 @@ validateEnvironment();
 async function main() {
 
   const agents = [
-    await initializePriceAgent(),
+    await initializeOracleAgent(),
     await initializeWalletAgent(),
     await initializeChatBot(),
   ];

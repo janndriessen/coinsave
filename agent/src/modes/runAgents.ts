@@ -1,12 +1,12 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { Agent } from "../utils/types";
 
-export async function runAgentsInAutonomousMode(_priceAgent: Agent, _walletAgent: Agent, amount = 1, interval = 10) {
+export async function runAgentsInAutonomousMode(_oracleAgent: Agent, _walletAgent: Agent, amount = 1, interval = 10) {
   console.log("Starting autonomous mode...");
 
   while (true) {
     try {
-      await runAgents(_priceAgent, _walletAgent, amount);
+      await runAgents(_oracleAgent, _walletAgent, amount);
       const timeout = interval * 1000; // Convert interval to seconds
       await new Promise(resolve => setTimeout(resolve, timeout));
     } catch (error) {
@@ -18,10 +18,10 @@ export async function runAgentsInAutonomousMode(_priceAgent: Agent, _walletAgent
   }
 }      
 
-export async function runAgents(_priceAgent: Agent, _walletAgent: Agent, amount: number = 1) {
+export async function runAgents(_oracleAgent: Agent, _walletAgent: Agent, amount: number = 1) {
   console.log("Starting chat mode... Type 'exit' to end.");
 
-  const shouldBuyBitcoin = await buyOrNotToBuy(_priceAgent);
+  const shouldBuyBitcoin = await buyOrNotToBuy(_oracleAgent);
 
   if (shouldBuyBitcoin) {
     console.log("Buying Bitcoin ....");
@@ -52,11 +52,11 @@ async function buyBitcoin(_walletAgent: Agent, amount: number = 1) {
 
 }
 
-async function buyOrNotToBuy(_priceAgent: Agent): Promise<boolean> {
-  const { agent: priceAgent, config: priceAgentConfig } = _priceAgent;
+async function buyOrNotToBuy(_oracleAgent: Agent): Promise<boolean> {
+  const { agent: oracleAgent, config: oracleAgentConfig } = _oracleAgent;
 
   const priceQuestion = "Should i buy bitcoin?";
-  const stream = await priceAgent.stream({ messages: [new HumanMessage(priceQuestion)] }, priceAgentConfig);
+  const stream = await oracleAgent.stream({ messages: [new HumanMessage(priceQuestion)] }, oracleAgentConfig);
 
   let buyBitcoin: boolean = false;
   for await (const chunk of stream) {

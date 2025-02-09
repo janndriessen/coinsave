@@ -100,27 +100,30 @@ class CSApi {
     }
 
     struct TransactionResponse: Decodable {
+        let account: String
         let transactions: [Transaction]
     }
 
     func getTransactions(for account: String) async throws -> [Transaction] {
         guard let url = URL(string: "\(baseUrl)/transactions?account=\(account)") else { throw CSApiError.invalidConfig }
-//        let request = try createGetRequest(url: url)
-//        let (data, _) = try await URLSession.shared.data(for: request)
-//        let res = try JSONDecoder().decode(TransactionResponse.self, from: data)
-//        return res.transactions
-        return [
-            Transaction(timestamp: "029349234", amount: "100", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "200", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "750", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "600", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "650", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "700", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "670", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
-        ]
+        let request = try createGetRequest(url: url)
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let res = try JSONDecoder().decode(TransactionResponse.self, from: data)
+        print(res)
+        return res.transactions
+        // Just for testing
+//        return [
+//            Transaction(timestamp: "029349234", amount: "100", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "200", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "750", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "600", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "650", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "700", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "670", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//            Transaction(timestamp: "029349234", amount: "500", dateFormatted: "2025-02-02", timeFormatted: "17:37:06"),
+//        ]
     }
 
     // MARK: - Internal

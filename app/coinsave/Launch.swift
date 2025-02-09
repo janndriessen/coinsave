@@ -28,13 +28,27 @@ struct Launch: View {
 
     var body: some View {
         ZStack {
-            CSColor.white.edgesIgnoringSafeArea(.all)
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 157/255, green: 160/255, blue: 156/255),
+                    CSColor.white
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
             VStack {
                 Spacer()
-                Text("coinsave")
-                    .foregroundStyle(CSColor.darkGray)
+                Image("smartsave-logo")
+                    .resizable()                          
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 150, height: 150)
+                    .clipShape(Circle())
+                Text("smartsave")
+                    .foregroundStyle(CSColor.black)
                     .font(.system(size: 36))
                     .bold()
+                    .shadow(radius: 8)
+                    .padding(.top, 16)
                 Spacer()
                 Button(action: {
                     Task {
@@ -49,7 +63,7 @@ struct Launch: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         } else {
-                            Text("Create")
+                            Text("Get Started")
                                 .fontWeight(.bold)
                         }
                     }

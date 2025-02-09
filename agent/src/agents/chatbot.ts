@@ -7,21 +7,22 @@ import {
   cdpApiActionProvider,
   cdpWalletActionProvider,
   pythActionProvider,
-} from "@coinbase/agentkit";
-import { getLangChainTools } from "@coinbase/agentkit-langchain";
-import { MemorySaver } from "@langchain/langgraph";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
-import { signer } from "../actions/signer";
-import { Agent } from "../utils/types";
-import { dallETool } from "../tools/dallee";
-import { basescan } from "../actions/basescan";
+} from '@coinbase/agentkit';
+import { getLangChainTools } from '@coinbase/agentkit-langchain';
+import { MemorySaver } from '@langchain/langgraph';
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
+import { ChatOpenAI } from '@langchain/openai';
+import { signer } from '../actions/signer';
+import { Agent } from '../utils/types';
+import { dallETool } from '../tools/dallee';
+import { basescan } from '../actions/basescan';
 
-
-export async function initializeChatBot(walletProvider: CdpWalletProvider): Promise<Agent> {
+export async function initializeChatBot(
+  walletProvider: CdpWalletProvider
+): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
-    model: "gpt-4o-mini",
+    model: 'gpt-4o-mini',
   });
 
   // Initialize AgentKit
@@ -34,23 +35,33 @@ export async function initializeChatBot(walletProvider: CdpWalletProvider): Prom
       erc20ActionProvider(),
       cdpApiActionProvider({
         apiKeyName: process.env.CDP_API_KEY_NAME,
-        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
+          /\\n/g,
+          '\n'
+        ),
       }),
       cdpWalletActionProvider({
         apiKeyName: process.env.CDP_API_KEY_NAME,
-        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
+          /\\n/g,
+          '\n'
+        ),
       }),
       signer(),
-      basescan()
+      basescan(),
     ],
   });
 
-
-  const tools = [ ... await getLangChainTools(agentkit), dallETool];
+  const tools = [...(await getLangChainTools(agentkit)), dallETool];
 
   // Store buffered conversation history in memory
   const memory = new MemorySaver();
-  const config = { configurable: { thread_id: "Trick of all traits agent featuring dallE based on chatbot example" } };
+  const config = {
+    configurable: {
+      thread_id:
+        'Trick of all traits agent featuring dallE based on chatbot example',
+    },
+  };
 
   // Create React Agent using the LLM and CDP AgentKit tools
   const agent = createReactAgent({
@@ -69,7 +80,6 @@ export async function initializeChatBot(walletProvider: CdpWalletProvider): Prom
           restating your tools' descriptions unless it is explicitly requested.
           `,
   });
-
 
   return { agent, config };
 }

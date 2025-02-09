@@ -13,8 +13,11 @@ import type { Agent } from './utils/types';
 dotenv.config();
 validateEnvironment();
 
-
-async function startAgents(amountPerEpoch: number, interval: number, epochLength: number): Promise<Agent[]> {
+async function startAgents(
+  amountPerEpoch: number,
+  interval: number,
+  epochLength: number
+): Promise<Agent[]> {
   const wallet = await configureWallet();
 
   const agents = [
@@ -24,7 +27,13 @@ async function startAgents(amountPerEpoch: number, interval: number, epochLength
   ];
 
   console.log('Starting autonomous mode...');
-  await runAgentsInAutonomousMode(agents[0], agents[1], amountPerEpoch, interval, epochLength);
+  await runAgentsInAutonomousMode(
+    agents[0],
+    agents[1],
+    amountPerEpoch,
+    epochLength,
+    interval
+  );
 
   return agents;
 }
@@ -37,7 +46,8 @@ interface UpdateDCARequestBody {
 }
 
 fastify.put('/update-dca', async (request, reply) => {
-  const { amountPerEpoch, interval, epochLength } = request.body as UpdateDCARequestBody;
+  const { amountPerEpoch, interval, epochLength } =
+    request.body as UpdateDCARequestBody;
   console.log(request.body);
 
   await startAgents(amountPerEpoch, interval, epochLength);

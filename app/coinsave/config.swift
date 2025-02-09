@@ -7,4 +7,5 @@
 
 enum Config {
     static let baseUrl = "http://localhost:3001/api"
+    static let testAccount: String? = nil
 }

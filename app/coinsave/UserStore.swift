@@ -8,12 +8,15 @@
 import SwiftUI
 
 class UserStore {
-    @AppStorage("account") private var account: String = ""
+    static let accountKey = "com.coinsave.account"
 
     static var accountAddress: String {
-        get { Config.testAccount ?? UserStore().account }
+        get {
+            Config.testAccount ?? UserDefaults.standard.string(forKey: accountKey)!
+        }
         set {
-            UserStore().account = newValue
+            UserDefaults.standard.set(newValue, forKey: accountKey)
+            UserDefaults.standard.synchronize()
         }
     }
 }

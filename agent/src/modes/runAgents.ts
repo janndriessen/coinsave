@@ -1,7 +1,12 @@
 import { HumanMessage } from '@langchain/core/messages';
 
 import { Agent } from '../utils/types';
-import { get7DayAveragePrice, getCoinPrice } from '../tools/coingecko';
+import {
+  analyzePriceComparison,
+  getCoinPrice,
+} from '../tools/coingecko';
+import { getFeeComparison } from '../tools/blockchative';
+import { cbBTC_ADDRESS, MIN_BUY_AMOUNT_USD } from '../utils/constant';
 
 const SECONDS_PER_MONTH = 60 * 60 * 24 * 30;
 
@@ -37,16 +42,23 @@ export async function runAgents(
   console.log("Starting chat mode... Type 'exit' to end.");
 
   const shouldBuyBitcoin = await buyOrNotToBuy(_oracleAgent);
-  // // query amount bought amount target;
+  console.log('Should buy Bitcoin: ', shouldBuyBitcoin);
+
+  // query amount bought amount target;
   if (shouldBuyBitcoin) {
     const bitcoinAmountInUSD = await buyAmount(
       _walletAgent,
       amountPerEpoch,
       epochLength
     );
-
     console.log(`Buying ${bitcoinAmountInUSD} Bitcoin in USD ....`);
-    await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
+
+    if (bitcoinAmountInUSD > MIN_BUY_AMOUNT_USD) {
+      await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
+      console.log('Bought some Bitcoin ...');
+    } else {
+      console.log('Not enough funds to buy Bitcoin ...');
+    }
   } else {
     console.log('Not buying Bitcoin ...');
   }
@@ -54,17 +66,16 @@ export async function runAgents(
 
 async function buyBitcoin(_walletAgent: Agent, amount: number) {
   const { agent: walletAgent, config: walletAgentConfig } = _walletAgent;
-  const btc_usd = await getCoinPrice('bitcoin');
-  const eth_usd = await getCoinPrice('ethereum');
-  console.log('BTC Price: ', btc_usd);
+  const btc_usd = (await getCoinPrice('bitcoin')) ?? 96000;
+  const eth_usd = (await getCoinPrice('ethereum')) ?? 2600;
 
   const amountToBuyInEth = amount / eth_usd;
   const amountToBuyInCbtc = amount / btc_usd;
 
-  const buyQuestion = `Please swap ${amount} worth of balance for cbBTC. Note that that ETH is around 2'600 USD and
-  cbBTC is around 96'000 USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. But just take this as a reference
-  point and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to
-  the console.`;
+  const buyQuestion = `Please swap ${amount} worth of ETH for cbBTC. cbBTC has the token address ${cbBTC_ADDRESS} on the base mainnet network and is roughl pegged to the price of BTC
+  which price you know. Note that that ETH is around ${eth_usd} USD and cbBTC is around ${btc_usd} USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. 
+  But just take this as a reference and accept the price quoted by the exchange. Please further print the transaction receipt to the console.`;
+
   const stream = await walletAgent.stream(
     { messages: [new HumanMessage(buyQuestion)] },
     walletAgentConfig
@@ -83,10 +94,10 @@ async function buyBitcoin(_walletAgent: Agent, amount: number) {
 async function buyOrNotToBuy(_oracleAgent: Agent): Promise<boolean> {
   const { agent: oracleAgent, config: oracleAgentConfig } = _oracleAgent;
 
-  const currentPrice = await getCoinPrice('bitcoin');
-  const averagePrice = await get7DayAveragePrice('bitcoin');
+  const priceAnalysis = await analyzePriceComparison('bitcoin');
+  const gasPriceAnlysis = await getFeeComparison();
 
-  const priceQuestion = `Should i buy bitcoin. yes or no. Take into consideration that the current price of bitcoin is ${currentPrice} and the 7 day average price is ${averagePrice}`;
+  const priceQuestion = `Should i buy bitcoin. yes or no. Take into consideration this price analysis ${priceAnalysis} this gas price analysis ${gasPriceAnlysis}`;
   const stream = await oracleAgent.stream(
     { messages: [new HumanMessage(priceQuestion)] },
     oracleAgentConfig

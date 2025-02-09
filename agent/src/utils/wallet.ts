@@ -46,11 +46,9 @@ export async function configureWallet(): Promise<CdpWalletProvider> {
 }
 
 export async function createWallet() {
+  const wallet = await configureWallet();
 
-    const wallet = await configureWallet();
-   
-    // Save wallet data
-    const exportedWallet = await wallet.exportWallet();
-    fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
-
+  // Save wallet data
+  const exportedWallet = await wallet.exportWallet();
+  fs.writeFileSync(WALLET_DATA_FILE, JSON.stringify(exportedWallet));
 }

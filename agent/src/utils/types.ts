@@ -1,4 +1,4 @@
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
 
 export interface Agent {
   agent: ReturnTypeOfReatReactAgent;

@@ -7,20 +7,21 @@ import {
   cdpApiActionProvider,
   cdpWalletActionProvider,
   pythActionProvider,
-} from "@coinbase/agentkit";
-import { getLangChainTools } from "@coinbase/agentkit-langchain";
-import { MemorySaver } from "@langchain/langgraph";
-import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
-import { Agent } from "../utils/types";
+} from '@coinbase/agentkit';
+import { getLangChainTools } from '@coinbase/agentkit-langchain';
+import { MemorySaver } from '@langchain/langgraph';
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
+import { ChatOpenAI } from '@langchain/openai';
+import { Agent } from '../utils/types';
+import { basescan } from '../actions/basescan';
 
-
-export async function initializeWalletAgent(walletProvider: CdpWalletProvider): Promise<Agent> {
+export async function initializeWalletAgent(
+  walletProvider: CdpWalletProvider
+): Promise<Agent> {
   // Initialize LLM
   const llm = new ChatOpenAI({
-    model: "gpt-4o-mini",
+    model: 'gpt-4o-mini',
   });
-
 
   // Initialize AgentKit
   const agentkit = await AgentKit.from({
@@ -32,21 +33,29 @@ export async function initializeWalletAgent(walletProvider: CdpWalletProvider): 
       erc20ActionProvider(),
       cdpApiActionProvider({
         apiKeyName: process.env.CDP_API_KEY_NAME,
-        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
+          /\\n/g,
+          '\n'
+        ),
       }),
       cdpWalletActionProvider({
         apiKeyName: process.env.CDP_API_KEY_NAME,
-        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        apiKeyPrivateKey: process.env.CDP_API_KEY_PRIVATE_KEY?.replace(
+          /\\n/g,
+          '\n'
+        ),
       }),
+      basescan(),
     ],
   });
 
-
-  const tools = [... await getLangChainTools(agentkit)];
+  const tools = [...(await getLangChainTools(agentkit))];
 
   // Store buffered conversation history in memory
   const memory = new MemorySaver();
-  const config = { configurable: { thread_id: "Agent with on-chain capabilities" } };
+  const config = {
+    configurable: { thread_id: 'Agent with on-chain capabilities' },
+  };
 
   // Create React Agent using the LLM and CDP AgentKit tools
   const agent = createReactAgent({

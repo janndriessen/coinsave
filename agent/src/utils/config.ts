@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -12,7 +12,11 @@ export function validateEnvironment(): void {
   const missingVars: string[] = [];
 
   // Check required variables
-  const requiredVars = ["OPENAI_API_KEY", "CDP_API_KEY_NAME", "CDP_API_KEY_PRIVATE_KEY"];
+  const requiredVars = [
+    'OPENAI_API_KEY',
+    'CDP_API_KEY_NAME',
+    'CDP_API_KEY_PRIVATE_KEY',
+  ];
 
   requiredVars.forEach((variable) => {
     if (!process.env[variable]) {
@@ -21,6 +25,8 @@ export function validateEnvironment(): void {
   });
 
   if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+    throw new Error(
+      `Missing required environment variables: ${missingVars.join(', ')}`
+    );
   }
 }

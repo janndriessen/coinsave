@@ -1,12 +1,12 @@
-import { HumanMessage } from "@langchain/core/messages";
-import * as readline from "readline";
-import { Agent } from "../utils/types";
+import { HumanMessage } from '@langchain/core/messages';
+import * as readline from 'readline';
+import { Agent } from '../utils/types';
 
 export async function runChatMode(chatBots: Agent[]) {
   console.log("Starting chat mode... Type 'exit' to end.");
 
   const model_id = await chooseModel(chatBots);
-  const {agent, config} = chatBots[model_id];
+  const { agent, config } = chatBots[model_id];
 
   const rl = readline.createInterface({
     input: process.stdin,
@@ -14,30 +14,33 @@ export async function runChatMode(chatBots: Agent[]) {
   });
 
   const question = (prompt: string): Promise<string> =>
-    new Promise(resolve => rl.question(prompt, resolve));
+    new Promise((resolve) => rl.question(prompt, resolve));
 
   try {
     while (true) {
-      const userInput = await question("\nPrompt: ");
+      const userInput = await question('\nPrompt: ');
 
-      if (userInput.toLowerCase() === "exit") {
+      if (userInput.toLowerCase() === 'exit') {
         break;
       }
 
-        const stream = await agent.stream({ messages: [new HumanMessage(userInput)] }, config);
+      const stream = await agent.stream(
+        { messages: [new HumanMessage(userInput)] },
+        config
+      );
 
-        for await (const chunk of stream) {
-          if ("agent" in chunk) {
-            console.log(chunk.agent.messages[0].content);
-          } else if ("tools" in chunk) {
-            console.log(chunk.tools.messages[0].content);
-          }
-          console.log("-------------------");
+      for await (const chunk of stream) {
+        if ('agent' in chunk) {
+          console.log(chunk.agent.messages[0].content);
+        } else if ('tools' in chunk) {
+          console.log(chunk.tools.messages[0].content);
         }
+        console.log('-------------------');
       }
+    }
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Error:", error.message);
+      console.error('Error:', error.message);
     }
     process.exit(1);
   } finally {
@@ -52,9 +55,9 @@ export async function chooseModel(chatBots: Agent[]): Promise<number> {
   });
 
   const question = (prompt: string): Promise<string> =>
-    new Promise(resolve => rl.question(prompt, resolve));
+    new Promise((resolve) => rl.question(prompt, resolve));
 
-  console.log("Available ChatBots:");
+  console.log('Available ChatBots:');
 
   let thread_ids = [];
   for (let i = 0; i < chatBots.length; i++) {
@@ -64,7 +67,7 @@ export async function chooseModel(chatBots: Agent[]): Promise<number> {
   }
 
   while (true) {
-    const choice = (await question("\nChoose a mode (enter number): "))
+    const choice = (await question('\nChoose a mode (enter number): '))
       .toLowerCase()
       .trim();
 

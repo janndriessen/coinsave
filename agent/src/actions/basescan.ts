@@ -1,7 +1,7 @@
-import { customActionProvider, EvmWalletProvider } from "@coinbase/agentkit";
-import { z } from "zod";
+import { customActionProvider, EvmWalletProvider } from '@coinbase/agentkit';
+import { z } from 'zod';
 import axios from 'axios';
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem';
 
 interface Log {
   address: string;
@@ -24,25 +24,38 @@ interface ApiResponse {
 }
 
 export const BaseScanMessageSchema = z.object({
-  message: z.string().describe("The start time of the query as timestamp in seconds e.g. `1739008123`"),
+  message: z
+    .string()
+    .describe(
+      'The start time of the query as timestamp in seconds e.g. `1739008123`'
+    ),
 });
 
-import { ActionProvider, WalletProvider, Network, CreateAction } from "@coinbase/agentkit";
-import { cbBTC_ADDRESS } from "../utils/constant";
+import {
+  ActionProvider,
+  WalletProvider,
+  Network,
+  CreateAction,
+} from '@coinbase/agentkit';
+import { cbBTC_ADDRESS } from '../utils/constant';
 
-const transferEventSignature = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const transferEventSignature =
+  '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
 class BasescanProvider extends ActionProvider<WalletProvider> {
   constructor() {
-    super("my-action-provider", []);
+    super('my-action-provider', []);
   }
   @CreateAction({
-    name: "get_btc_transferred",
-    description: "Get all bitcoin transferred to my account as number with 8 decimal places",
+    name: 'get_btc_transferred',
+    description:
+      'Get all bitcoin transferred to my account as number with 8 decimal places',
     schema: BaseScanMessageSchema,
   })
-
-  async get_btc_transferred(walletProvider: EvmWalletProvider, args: z.infer<typeof BaseScanMessageSchema>): Promise<string | undefined> {
+  async get_btc_transferred(
+    walletProvider: EvmWalletProvider,
+    args: z.infer<typeof BaseScanMessageSchema>
+  ): Promise<string | undefined> {
     const { message } = args;
     const userAddress = walletProvider.getAddress();
 
@@ -52,6 +65,7 @@ class BasescanProvider extends ActionProvider<WalletProvider> {
     const fromBlock = '1844947';
     const toBlock = 'latest';
     const toAddress = `0x000000000000000000000000${userAddress.slice(2)}`;
+    // TODO: filter by fromAddress by "coinbase"
     const page = 1;
     const offset = 1000;
 
@@ -69,7 +83,7 @@ class BasescanProvider extends ActionProvider<WalletProvider> {
       const response = await axios.get(url);
       const data: ApiResponse = response.data;
 
-      if (data.status === "1" && data.message === "OK") {
+      if (data.status === '1' && data.message === 'OK') {
         for (const log of data.result) {
           const timeStamp = parseInt(log.timeStamp, 16);
 
@@ -79,20 +93,17 @@ class BasescanProvider extends ActionProvider<WalletProvider> {
             amountBought += valueAsBigInt;
           }
         }
-
       } else {
         console.error('Error fetching logs:', data.message);
       }
-            
+
       return formatUnits(amountBought, 8);
     } catch (error) {
       console.error('Error fetching logs:', error);
     }
   }
 
-
-  supportsNetwork = (network: Network) => network.chainId === "8453";
-
+  supportsNetwork = (network: Network) => network.chainId === '8453';
 }
 
 export const basescan = () => new BasescanProvider();

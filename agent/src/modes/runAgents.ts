@@ -1,5 +1,7 @@
 import { HumanMessage } from '@langchain/core/messages';
+
 import { Agent } from '../utils/types';
+import { get7DayAveragePrice, getCoinPrice } from '../tools/coingecko';
 
 const SECONDS_PER_MONTH = 60 * 60 * 24 * 30;
 
@@ -35,49 +37,59 @@ export async function runAgents(
   console.log("Starting chat mode... Type 'exit' to end.");
 
   const shouldBuyBitcoin = await buyOrNotToBuy(_oracleAgent);
-
-  // query amount bought amount target;
+  // const shouldBuyBitcoin = true;
+  // // query amount bought amount target;
   if (shouldBuyBitcoin) {
-    const bitcoinAmountInUSD = await buyAmount(
-      _walletAgent,
-      amountPerEpoch,
-      epochLength
-    );
+    // const bitcoinAmountInUSD = await buyAmount(
+    //   _walletAgent,
+    //   amountPerEpoch,
+    //   epochLength
+    // );
+    const bitcoinAmountInUSD = 1;
 
     console.log(`Buying ${bitcoinAmountInUSD} Bitcoin in USD ....`);
-    await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
-  } else {
+  //   await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
+  // } else {
     console.log('Not buying Bitcoin ...');
   }
 }
+
 async function buyBitcoin(_walletAgent: Agent, amount: number) {
   const { agent: walletAgent, config: walletAgentConfig } = _walletAgent;
-  
-  const amountToBuyInEth = amount / 2600; // TODO: Get the current ETH price
-  const amountToBuyInCbtc = amount / 96000; // TODO: Get the current cbBTC price
-  const buyQuestion = `Please swap ${amount} worth of balance for cbBTC. Note that that ETH is around 2'600 USD and
-  cbBTC is around 96'000 USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. But just take this as a reference
-  point and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to 
-  the console.`;
-  const stream = await walletAgent.stream(
-    { messages: [new HumanMessage(buyQuestion)] },
-    walletAgentConfig
-  );
+  const btc_usd = await getCoinPrice('bitcoin');
+  const eth_usd = await getCoinPrice('ethereum');
+  console.log('BTC Price: ', btc_usd);
 
-  for await (const chunk of stream) {
-    if ('agent' in chunk) {
-      console.log(chunk.agent.messages[0].content);
-    } else if ('tools' in chunk) {
-      console.log(chunk.tools.messages[0].content);
-    }
-    console.log('-------------------');
-  }
+  const amountToBuyInEth = amount / eth_usd;
+  const amountToBuyInCbtc = amount / btc_usd;
+
+  // const buyQuestion = `Please swap ${amount} worth of balance for cbBTC. Note that that ETH is around 2'600 USD and
+  // cbBTC is around 96'000 USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. But just take this as a reference
+  // point and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to
+  // the console.`;
+  // const stream = await walletAgent.stream(
+  //   { messages: [new HumanMessage(buyQuestion)] },
+  //   walletAgentConfig
+  // );
+
+  // for await (const chunk of stream) {
+  //   if ('agent' in chunk) {
+  //     console.log(chunk.agent.messages[0].content);
+  //   } else if ('tools' in chunk) {
+  //     console.log(chunk.tools.messages[0].content);
+  //   }
+  //   console.log('-------------------');
+  // }
+
 }
 
 async function buyOrNotToBuy(_oracleAgent: Agent): Promise<boolean> {
   const { agent: oracleAgent, config: oracleAgentConfig } = _oracleAgent;
 
-  const priceQuestion = 'Should i buy bitcoin?';
+  const currentPrice = await getCoinPrice('bitcoin');
+  const averagePrice = await get7DayAveragePrice('bitcoin');
+
+  const priceQuestion = `Should i buy bitcoin. yes or no. Take into consideration that the current price of bitcoin is ${currentPrice} and the 7 day average price is ${averagePrice}`;
   const stream = await oracleAgent.stream(
     { messages: [new HumanMessage(priceQuestion)] },
     oracleAgentConfig
@@ -121,7 +133,7 @@ async function buyAmount(
   const epochStartInSeconds =
     Math.floor(currentTimeInSeconds / epochLength) * epochLength;
 
-    const priceQuestion = `get me the amount of cbtc i have bought since timestamp ${epochStartInSeconds} and covert this amount to a dollar value and return the following 
+  const priceQuestion = `get me the amount of cbtc i have bought since timestamp ${epochStartInSeconds} and covert this amount to a dollar value and return the following 
     format to me 'USD_AMOUNT_DCA=$AMOUNT', e.g. when the amount is 1000 USD the output should be 'USD_AMOUNT_DCA=1000'`;
   const stream = await walletAgent.stream(
     { messages: [new HumanMessage(priceQuestion)] },
@@ -149,7 +161,6 @@ async function buyAmount(
         console.error('Error parsing message');
       }
     }
-
   }
 
   const targetAmount =

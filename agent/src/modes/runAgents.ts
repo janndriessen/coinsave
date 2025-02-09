@@ -37,19 +37,17 @@ export async function runAgents(
   console.log("Starting chat mode... Type 'exit' to end.");
 
   const shouldBuyBitcoin = await buyOrNotToBuy(_oracleAgent);
-  // const shouldBuyBitcoin = true;
   // // query amount bought amount target;
   if (shouldBuyBitcoin) {
-    // const bitcoinAmountInUSD = await buyAmount(
-    //   _walletAgent,
-    //   amountPerEpoch,
-    //   epochLength
-    // );
-    const bitcoinAmountInUSD = 1;
+    const bitcoinAmountInUSD = await buyAmount(
+      _walletAgent,
+      amountPerEpoch,
+      epochLength
+    );
 
     console.log(`Buying ${bitcoinAmountInUSD} Bitcoin in USD ....`);
-  //   await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
-  // } else {
+    await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
+  } else {
     console.log('Not buying Bitcoin ...');
   }
 }
@@ -63,24 +61,23 @@ async function buyBitcoin(_walletAgent: Agent, amount: number) {
   const amountToBuyInEth = amount / eth_usd;
   const amountToBuyInCbtc = amount / btc_usd;
 
-  // const buyQuestion = `Please swap ${amount} worth of balance for cbBTC. Note that that ETH is around 2'600 USD and
-  // cbBTC is around 96'000 USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. But just take this as a reference
-  // point and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to
-  // the console.`;
-  // const stream = await walletAgent.stream(
-  //   { messages: [new HumanMessage(buyQuestion)] },
-  //   walletAgentConfig
-  // );
+  const buyQuestion = `Please swap ${amount} worth of balance for cbBTC. Note that that ETH is around 2'600 USD and
+  cbBTC is around 96'000 USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. But just take this as a reference
+  point and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to
+  the console.`;
+  const stream = await walletAgent.stream(
+    { messages: [new HumanMessage(buyQuestion)] },
+    walletAgentConfig
+  );
 
-  // for await (const chunk of stream) {
-  //   if ('agent' in chunk) {
-  //     console.log(chunk.agent.messages[0].content);
-  //   } else if ('tools' in chunk) {
-  //     console.log(chunk.tools.messages[0].content);
-  //   }
-  //   console.log('-------------------');
-  // }
-
+  for await (const chunk of stream) {
+    if ('agent' in chunk) {
+      console.log(chunk.agent.messages[0].content);
+    } else if ('tools' in chunk) {
+      console.log(chunk.tools.messages[0].content);
+    }
+    console.log('-------------------');
+  }
 }
 
 async function buyOrNotToBuy(_oracleAgent: Agent): Promise<boolean> {

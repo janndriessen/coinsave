@@ -11,7 +11,7 @@ class UserStore {
     @AppStorage("account") private var account: String = ""
 
     static var accountAddress: String {
-        get { UserStore().account }
+        get { Config.testAccount ?? UserStore().account }
         set {
             UserStore().account = newValue
         }

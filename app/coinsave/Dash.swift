@@ -15,7 +15,7 @@ class DashViewModel: ObservableObject {
     private let api = CSApi()
 
     var bars: [Bar] {
-        return transactions.map {
+        return transactions.reversed().map {
             return Bar(data: (Double($0.amount) ?? 0.0) / 20, label: String($0.dateFormatted.split(separator: "-")[2]))
         }
     }

@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { formatEther, parseUnits } from "viem";
+import { parseUnits } from "viem";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

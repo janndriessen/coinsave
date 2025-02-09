@@ -77,7 +77,6 @@ class BasescanProvider extends ActionProvider<WalletProvider> {
 
     const url = `https://api.basescan.org/api?module=logs&action=getLogs&fromBlock=${fromBlock}&toBlock=${toBlock}&address=${cbBTC_ADDRESS}&topic0=${transferEventSignature}&topic0_2_opr=and&topic2=${toAddress}&page=${page}&offset=${offset}&apikey=${apiKey}`;
 
-    console.log('Fetching logs from:', url);
     let amountBought = BigInt(0);
     try {
       const response = await axios.get(url);

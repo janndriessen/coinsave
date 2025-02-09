@@ -45,18 +45,20 @@ export async function runAgents(
     );
 
     console.log(`Buying ${bitcoinAmountInUSD} Bitcoin in USD ....`);
-    // await buyBitcoin(_walletAgent);
+    await buyBitcoin(_walletAgent, bitcoinAmountInUSD);
   } else {
     console.log('Not buying Bitcoin ...');
   }
 }
-async function buyBitcoin(_walletAgent: Agent, amount: number = 1) {
+async function buyBitcoin(_walletAgent: Agent, amount: number) {
   const { agent: walletAgent, config: walletAgentConfig } = _walletAgent;
-  const buyQuestion = `Please swap ${amount} dollar worth of eth balance for cbBTC. Note that that ETH is around 2'600 USD and
-  cbBTC is around 96'000 USD so you should swap around 0.0002 ETH for around 0,000005 cbBTC. But just take this as a reference
-  poind and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to 
+  
+  const amountToBuyInEth = amount / 2600; // TODO: Get the current ETH price
+  const amountToBuyInCbtc = amount / 96000; // TODO: Get the current cbBTC price
+  const buyQuestion = `Please swap ${amount} worth of balance for cbBTC. Note that that ETH is around 2'600 USD and
+  cbBTC is around 96'000 USD so you should swap around ${amountToBuyInEth} ETH for around ${amountToBuyInCbtc} cbBTC. But just take this as a reference
+  point and check the current price of cbBTC and ETH before you make the swap. Please further print the transaction receipt to 
   the console.`;
-
   const stream = await walletAgent.stream(
     { messages: [new HumanMessage(buyQuestion)] },
     walletAgentConfig
@@ -119,8 +121,8 @@ async function buyAmount(
   const epochStartInSeconds =
     Math.floor(currentTimeInSeconds / epochLength) * epochLength;
 
-  const priceQuestion = `get me the amount of cbtc i have bought since timestamp ${epochStartInSeconds} and covert this amount to a dollar value and return the following 
-  format to me 'USD_AMOUNT_DCA=$AMOUNT', e.g. when the amount is 1000 USD the output should be 'USD_AMOUNT_DCA=1000'`;
+    const priceQuestion = `get me the amount of cbtc i have bought since timestamp ${epochStartInSeconds} and covert this amount to a dollar value and return the following 
+    format to me 'USD_AMOUNT_DCA=$AMOUNT', e.g. when the amount is 1000 USD the output should be 'USD_AMOUNT_DCA=1000'`;
   const stream = await walletAgent.stream(
     { messages: [new HumanMessage(priceQuestion)] },
     walletAgentConfig

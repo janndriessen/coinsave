@@ -38,7 +38,7 @@ async function runAgentMode(
 
 if (require.main === module) {
   console.log('Starting Agent...');
-  const interval = 10;
+  const interval = 30;
 
   const amountPerEpoch = 10;
   const epochLength = 60 * 60 * 24; // 1 day

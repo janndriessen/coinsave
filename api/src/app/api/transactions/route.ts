@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { formatEther, parseUnits } from "viem";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
     const timestamp = transfer.metadata.blockTimestamp;
     return {
       timestamp,
-      amount: transfer.value.toString(),
+      amount: parseUnits(transfer.value.toString(), 8).toString(),
       dateFormatted: timestamp.split("T")[0],
       timeFormatted: timestamp.split("T")[1].split(".")[0],
     };

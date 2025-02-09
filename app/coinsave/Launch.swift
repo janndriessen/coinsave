@@ -42,7 +42,7 @@ struct Launch: View {
                     .resizable()                          
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 150, height: 150)
-                    .clipShape(Circle())
+//                    .clipShape(Circle())
                 Text("smartsave")
                     .foregroundStyle(CSColor.black)
                     .font(.system(size: 36))

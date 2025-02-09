@@ -20,9 +20,9 @@ class DCAPopupViewModel: ObservableObject {
     private let api = CSApi()
 
     @MainActor
-    func updateDcaConfig() async {
+    func updateDcaConfig(_ amount: String) async {
         try? await Task.sleep(nanoseconds: 1_500_000_000)
-        let config = CSApi.DcaConfig(account: UserStore.accountAddress, inputAmount: "10000")
+        let config = CSApi.DcaConfig(account: UserStore.accountAddress, inputAmount: amount)
         let success = try? await api.putDcaConfig(config)
         print("Updated DCA config with success: \(success ?? false)")
     }
@@ -63,7 +63,7 @@ struct DCAPopup: View {
                 Button(action: {
                     Task.init {
                         isLoading = true
-                        await viewModel.updateDcaConfig()
+                        await viewModel.updateDcaConfig(amount)
                         isLoading = false
                     }
                 }) {
